@@ -76,20 +76,15 @@ io.on('connection', async socket => {
 	})
 
 	socket.on('checkForUpdate', function (callback) {
-		const package = require('./package.json')
-		callback({ version: package.version, updateurl: package.updateurl })
+		if (!callback) { return }
+		const config = require('./config.json')
+		callback({ version: config.version, updateurl: config.updateurl })
 	})
 
 	socket.on('getGroupsList', async callback => {
 		if (!callback) { return }
-		const groupsList = [{
-			text: 'ПКС-3.2',
-			value: 'PKS'
-		}, {
-			text: 'ПКС-3К',
-			value: 'PKS-K'
-		}]
-		callback({ groupsList })
+		const config = require('./config.json')
+		callback({ groupsList: config.groupsList })
 	})
 
 	socket.on('addRequest', async (data, callback) => {

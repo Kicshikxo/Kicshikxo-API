@@ -1,0 +1,12 @@
+{
+    "version": "3.0.3",
+    "updateurl": "https://disk.yandex.ru/d/T_ilFKizEGpwCg",
+
+    "groupsList": [{
+        "text": "ПКС-3.2",
+        "value": "PKS"
+    }, {
+        "text": "ПКС-3К",
+        "value": "PKS-K"
+    }]
+} 
