@@ -16,7 +16,7 @@ app.get('/weeks', async (req, res) => {
 
     return res.json({ success: true, totalItems, receivedItems: weeks.length, weeks })
 })
-app.get('/checkPassword', (req, res) => {
+app.get('/check-password', (req, res) => {
     const { password } = req.query
     return res.json({
         success: true,
