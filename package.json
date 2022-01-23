@@ -1,0 +1,34 @@
+{
+  "name": "kicshikxo-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kicshikxo/Kicshikxo-API.git"
+  },
+  "keywords": [],
+  "author": "Kicshikxo <supermagevalera9000@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kicshikxo/Kicshikxo-API/issues"
+  },
+  "homepage": "https://github.com/Kicshikxo/Kicshikxo-API#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "deepai": "^1.0.17",
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
+    "follow-redirects": ">=1.14.7",
+    "iconv-lite": "^0.6.3",
+    "jsonwebtoken": "^8.5.1",
+    "monk": "^7.3.4",
+    "sha256": "^0.2.0",
+    "socket.io": "^4.4.1"
+  }
+}
