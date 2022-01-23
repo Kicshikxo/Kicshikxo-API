@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "git submodule update",
     "start": "node index.js"
   },
   "repository": {
