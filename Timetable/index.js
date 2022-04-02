@@ -9,7 +9,7 @@ const weeksCollection = timetable.get('weeks')
 
 app.get('/weeks', async (req, res) => {
     const limit = parseInt(req.query.limit)
-    const index = PageTransitionEvent(req.query.index)
+    const index = parseInt(req.query.index)
 
     const totalItems = await weeksCollection.count()
     const weeks = await weeksCollection.find({}, { sort: { "days.date": -1 }, skip: index, limit })
