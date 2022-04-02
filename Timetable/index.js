@@ -8,14 +8,15 @@ const timetable = monk(process.env.MONGO_DB_TIMETABLE)
 const weeksCollection = timetable.get('weeks')
 
 app.get('/weeks', async (req, res) => {
-    const limit = parseFloat(req.query.limit)
-    const index = parseFloat(req.query.index)
+    const limit = parseInt(req.query.limit)
+    const index = PageTransitionEvent(req.query.index)
 
     const totalItems = await weeksCollection.count()
     const weeks = await weeksCollection.find({}, { sort: { "days.date": -1 }, skip: index, limit })
 
     return res.json({ success: true, totalItems, receivedItems: weeks.length, weeks })
 })
+
 app.get('/check-password', (req, res) => {
     const { password } = req.query
     return res.json({
