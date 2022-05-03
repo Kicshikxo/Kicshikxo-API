@@ -35,7 +35,6 @@ app.get('/weeks', async (req, res) => {
 })
 
 app.post('/login', async (req, res) => {
-    console.log(req.body)
     const { groupId, password } = req.body
 
     if (!AUTH_PASSWORDS[groupId]) {
@@ -43,7 +42,7 @@ app.post('/login', async (req, res) => {
     }
 
     if (password) {
-        if (AUTH_PASSWORDS[groupId] === password) {
+        if (AUTH_PASSWORDS[groupId] == password) {
             const token = jwt.sign({ groupId, password }, process.env.SECRET_KEY)
             return res.json({ success: true, token, isAdmin: true })
         } else {
@@ -56,7 +55,6 @@ app.post('/login', async (req, res) => {
 })
 
 app.post('/check-login', async (req, res) => {
-    console.log(req.body)
     const { token } = req.body
 
     try {
