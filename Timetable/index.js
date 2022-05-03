@@ -59,7 +59,7 @@ app.post('/check-login', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET_KEY)
-        if (!decoded.password || AUTH_PASSWORDS[decoded.groupId] === decoded.password) {
+        if (!decoded.password || AUTH_PASSWORDS[decoded.groupId] == decoded.password) {
             return res.json({ success: true })
         } else {
             return res.status(401).json({ success: false, message: 'Ошибка авторизации' })
