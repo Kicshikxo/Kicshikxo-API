@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken')
 
 const app = express()
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
 const AUTH_PASSWORDS = JSON.parse(process.env.TIMETABLE_PASSWORDS || null)
 
 const groups = [
