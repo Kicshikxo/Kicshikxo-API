@@ -1,11 +1,25 @@
 require('dotenv').config()
 const express = require('express')
 const monk = require('monk')
+const jwt = require('jsonwebtoken')
 
 const app = express()
 
+const AUTH_PASSWORDS = JSON.parse(process.env.TIMETABLE_PASSWORDS || null)
+
+const groups = [
+    {
+        id: 'PKS-3.2',
+        name: 'ПКС-3.2',
+    }
+]
+
 const timetable = monk(process.env.MONGO_DB_TIMETABLE)
 const weeksCollection = timetable.get('weeks')
+
+app.get('/groups', async (req, res) => {
+    return res.json({ groups })
+})
 
 app.get('/weeks', async (req, res) => {
     const limit = parseInt(req.query.limit)
