@@ -31,12 +31,39 @@ app.get('/weeks', async (req, res) => {
     return res.json({ success: true, totalItems, receivedItems: weeks.length, weeks })
 })
 
-app.get('/check-password', (req, res) => {
-    const { password } = req.query
-    return res.json({
-        success: true,
-        valid: password == process.env.TIMETABLE_PASSWORD
-    })
+app.post('/login', async (req, res) => {
+    const { groupId, password } = req.body
+
+    if (!AUTH_PASSWORDS[groupId]) {
+        return res.status(400).json({ success: false, message: 'Такой группы не существует' })
+    }
+
+    if (password) {
+        if (AUTH_PASSWORDS[groupId] === password) {
+            const token = jwt.sign({ groupId, password }, process.env.SECRET_KEY)
+            return res.json({ success: true, token, isAdmin: true })
+        } else {
+            return res.status(401).json({ success: false, message: 'Ошибка авторизации' })
+        }
+    } else {
+        const token = jwt.sign({ groupId, isAdmin: false }, process.env.SECRET_KEY)
+        return res.json({ success: true, token })
+    }
+})
+
+app.post('/check-login', async (req, res) => {
+    const { token } = req.body
+
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
+        if (!decoded.password || AUTH_PASSWORDS[decoded.groupId] === decoded.password) {
+            return res.json({ success: true })
+        } else {
+            return res.status(401).json({ success: false, message: 'Ошибка авторизации' })
+        }
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Ошибка авторизации' })
+    }
 })
 
 module.exports = app
