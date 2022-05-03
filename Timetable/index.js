@@ -32,6 +32,7 @@ app.get('/weeks', async (req, res) => {
 })
 
 app.post('/login', async (req, res) => {
+    console.log(req.body)
     const { groupId, password } = req.body
 
     if (!AUTH_PASSWORDS[groupId]) {
@@ -52,6 +53,7 @@ app.post('/login', async (req, res) => {
 })
 
 app.post('/check-login', async (req, res) => {
+    console.log(req.body)
     const { token } = req.body
 
     try {
