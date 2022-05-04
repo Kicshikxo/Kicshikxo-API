@@ -49,8 +49,8 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ success: false, message: 'Ошибка авторизации' })
         }
     } else {
-        const token = jwt.sign({ groupId, isAdmin: false }, process.env.SECRET_KEY)
-        return res.json({ success: true, token })
+        const token = jwt.sign({ groupId }, process.env.SECRET_KEY)
+        return res.json({ success: true, token, isAdmin: false })
     }
 })
 
