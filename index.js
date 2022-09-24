@@ -4,7 +4,7 @@ const http = require('http')
 
 const moobotCommands = require('./Moobot-commands/index')
 const timetable = require('./Timetable/index')
-const timetable2 = require('./Timetable_v2/index')
+const timetable2 = require('./v2/Timetable/index')
 const duties = require('./Duties/index')
 
 const app = express()
