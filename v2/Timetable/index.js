@@ -11,6 +11,10 @@ app.get('/groups', async (req, res) => {
     return res.json({ groups: await dbController.getGroups() })
 })
 
+app.get('/academic-years', async (req, res) => {
+    return res.json({ academicYears: await dbController.getAcademicYears() })
+})
+
 function tokenAuthMiddleware(req, res, next) {
     req.token = { group: 'ПКС-4.2 2022-2023' }
     next()

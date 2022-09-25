@@ -17,6 +17,11 @@ class DatabaseController {
         return groups.rows.map(row => row.group)
     }
 
+    async getAcademicYears() {
+        const academicYears = await this.pool.query('SELECT * FROM academic_years')
+        return academicYears.rows.map(row => row.group)
+    }
+
     async getWeeks(limit, offset, group) {
         const weeks = await this.pool.query(`SELECT id as week, date::timestamptz, "index", name, cabinet FROM (SELECT id FROM weeks ORDER BY id DESC LIMIT ${limit || 'NULL'} OFFSET ${offset || 'NULL'}) AS selected_weeks, LATERAL select_lessons_by_week_id(id,'${group}') AS selected_lessons`)
         const result = {}
