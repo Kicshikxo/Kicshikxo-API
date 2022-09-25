@@ -24,12 +24,6 @@ app.get('/weeks', tokenAuthMiddleware, async (req, res) => {
     return res.json({ success: true, weeks: await dbController.getWeeks(limit, offset, group) })
 })
 
-app.get('/import', async (req, res) => {
-    const weeks = await axios.get('http://localhost:3000/timetable/weeks')
-    dbController.import(weeks.data.weeks)
-    return res.json({ message: 'ку' })
-})
-
 module.exports = app
 
 if (require.main === module) {
