@@ -19,7 +19,7 @@ class DatabaseController {
 
     async getAcademicYears() {
         const academicYears = await this.pool.query('SELECT * FROM academic_years')
-        return academicYears.rows.map(row => row.group)
+        return academicYears.rows.map(row => row.year)
     }
 
     async getWeeks(limit, offset, group) {
