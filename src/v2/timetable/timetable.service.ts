@@ -1,7 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { dayDto } from './dto/day.dto';
 import { groupDto } from './dto/group.dto';
-import { weekDto } from './dto/week.dto';
+import { Injectable } from '@nestjs/common';
 import { Pool } from 'pg';
+import { weekDto } from './dto/week.dto';
+import {
+  lessonDto,
+  lessonWithDateAndWeekIdDto,
+  lessonWithDateDto,
+} from './dto/lesson.dto';
+import {
+  firstValueFrom,
+  from,
+  groupBy,
+  map,
+  mergeMap,
+  Observable,
+  reduce,
+  toArray,
+} from 'rxjs';
 
 @Injectable()
 export class TimetableService {
@@ -17,16 +33,18 @@ export class TimetableService {
     });
   }
 
+  async getAcademicYears(): Promise<string[]> {
+    const academicYears = await this.pool.query('SELECT * FROM academic_years');
+    return academicYears.rows.map((row) => row.year);
+  }
+
   async getGroups(academicYear: string): Promise<groupDto[]> {
     const groups = await this.pool.query(
-      `SELECT id, academic_year FROM groups ${
+      `SELECT id, academic_year as "academicYear" FROM groups ${
         academicYear ? `WHERE academic_year = '${academicYear}'` : ''
       }`,
     );
-    return groups.rows.map<groupDto>((group) => ({
-      id: group.id,
-      academicYear: group.academic_year,
-    }));
+    return groups.rows as groupDto[];
   }
 
   async getWeeks(
@@ -34,23 +52,54 @@ export class TimetableService {
     offset: number,
     group: string,
   ): Promise<weekDto[]> {
-    const weeks = await this.pool.query(
-      `SELECT id as week, date::timestamptz, "index", name, cabinet FROM (SELECT id FROM weeks ORDER BY id DESC LIMIT ${
-        limit || 'NULL'
-      } OFFSET ${
-        offset || 'NULL'
-      }) AS selected_weeks, LATERAL select_lessons_by_week_id(id,'${group}') AS selected_lessons`,
-    );
-    const result: weekDto[] = [];
-    // for (const lesson of weeks.rows.map(row => Object.assign(row, { date: row.date.toISOString().split('T')[0] }))) {
-    //     if (!result[lesson.week]) result[lesson.week] = []
-    //     result[lesson.week].push({ date: lesson.date, index: lesson.index, name: lesson.name, cabinet: lesson.cabinet })
-    // }
-    // for ()
-    for (const lesson of weeks.rows.map((row) =>
+    console.time('db');
+    const lessons = (
+      await this.pool.query(
+        `SELECT id as "weekId", date::timestamptz, "index", name, cabinet FROM (SELECT id FROM weeks ORDER BY id DESC LIMIT ${
+          limit || 'NULL'
+        } OFFSET ${
+          offset || 'NULL'
+        }) AS selected_weeks, LATERAL select_lessons_by_week_id(id,'${group}') AS selected_lessons`,
+      )
+    ).rows.map((row) =>
       Object.assign(row, { date: row.date.toISOString().split('T')[0] }),
-    )) {
-    }
-    return [];
+    );
+    console.timeEnd('db');
+
+    const lessonsStream$: Observable<weekDto[]> = from(lessons).pipe(
+      groupBy((lesson: lessonWithDateAndWeekIdDto) => lesson.weekId, {
+        element: (lesson: lessonWithDateDto) => ({
+          date: lesson.date,
+          index: lesson.index,
+          name: lesson.name,
+          cabinet: lesson.cabinet,
+        }),
+      }),
+      mergeMap((daysGroup$) =>
+        daysGroup$.pipe(
+          groupBy((lesson: lessonWithDateDto) => lesson.date, {
+            element: (lesson: lessonDto) => ({
+              index: lesson.index,
+              name: lesson.name,
+              cabinet: lesson.cabinet,
+            }),
+          }),
+          mergeMap((lessonsGroup$) =>
+            lessonsGroup$.pipe(
+              reduce((acc, cur) => [...acc, cur], [lessonsGroup$.key]),
+            ),
+          ),
+          map<any[], dayDto>((arr) => ({
+            date: arr[0],
+            lessons: arr.slice(1),
+          })),
+          reduce((acc, cur) => [...acc, cur], [daysGroup$.key]),
+        ),
+      ),
+      map<any[], weekDto>((arr) => ({ id: arr[0], days: arr.slice(1) })),
+      toArray<weekDto>(),
+    );
+
+    return firstValueFrom(lessonsStream$);
   }
 }

@@ -1,19 +1,27 @@
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Query } from '@nestjs/common';
 import { groupDto } from './dto/group.dto';
 import { TimetableService } from './timetable.service';
 import { weekDto } from './dto/week.dto';
-import {
-  ApiExtraModels,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
 
 @ApiTags('Timetable v2')
 @Controller('/v2/timetable')
 export class TimetableController {
   constructor(private readonly timetableService: TimetableService) {}
+
+  @Get('academic-years')
+  @ApiOperation({ summary: 'Получение списка учебных лет' })
+  @ApiResponse({
+    status: 200,
+    schema: {
+      example: ['2021-2022', '2022-2023'],
+    },
+    isArray: true,
+    description: 'Список учебных лет',
+  })
+  async getAcademicYears(): Promise<string[]> {
+    return this.timetableService.getAcademicYears();
+  }
 
   @Get('groups')
   @ApiOperation({ summary: 'Получение списка групп' })
@@ -21,7 +29,7 @@ export class TimetableController {
     status: 200,
     type: groupDto,
     isArray: true,
-    description: 'Список недель',
+    description: 'Список групп',
   })
   @ApiQuery({
     name: 'academic-year',
@@ -70,7 +78,13 @@ export class TimetableController {
     @Query('limit') limit: number,
     @Query('offset') offset: number,
   ): Promise<weekDto[]> {
-    console.log(limit, offset);
-    return this.timetableService.getWeeks(limit, offset, 'ПКС-4.2');
+    console.time('all');
+    const result = await this.timetableService.getWeeks(
+      limit,
+      offset,
+      'ПКС-4.2 2022-2023',
+    );
+    console.timeEnd('all');
+    return result;
   }
 }
