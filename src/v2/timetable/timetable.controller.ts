@@ -33,7 +33,7 @@ export class TimetableController {
   })
   @ApiQuery({
     name: 'academic-year',
-    description: 'Учебный год группы',
+    description: 'Учебный год группы (по умолчанию все)',
     type: String,
     required: false,
     example: '2022-2023',
@@ -62,14 +62,14 @@ export class TimetableController {
   })
   @ApiQuery({
     name: 'limit',
-    description: 'Количество недель для получения',
+    description: 'Количество недель для получения (по умолчанию все)',
     type: Number,
     required: false,
     example: 42,
   })
   @ApiQuery({
     name: 'offset',
-    description: 'Количество пропущенных недель',
+    description: 'Количество пропущенных недель (по умолчанию 0)',
     type: Number,
     required: false,
     example: 3,
@@ -78,13 +78,6 @@ export class TimetableController {
     @Query('limit') limit: number,
     @Query('offset') offset: number,
   ): Promise<weekDto[]> {
-    console.time('all');
-    const result = await this.timetableService.getWeeks(
-      limit,
-      offset,
-      'ПКС-4.2 2022-2023',
-    );
-    console.timeEnd('all');
-    return result;
+    return this.timetableService.getWeeks(limit, offset, 'ПКС-4.2 2022-2023');
   }
 }

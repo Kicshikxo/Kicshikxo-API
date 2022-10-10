@@ -52,7 +52,6 @@ export class TimetableService {
     offset: number,
     group: string,
   ): Promise<weekDto[]> {
-    console.time('db');
     const lessons = (
       await this.pool.query(
         `SELECT week_id as "weekId", date::timestamptz, "index", name, cabinet FROM (SELECT week_id FROM select_filled_weeks_for_group('${group}') as week_id LIMIT ${
@@ -64,7 +63,6 @@ export class TimetableService {
     ).rows.map((row) =>
       Object.assign(row, { date: row.date.toISOString().split('T')[0] }),
     );
-    console.timeEnd('db');
 
     const lessonsStream$: Observable<weekDto[]> = from(lessons).pipe(
       groupBy((lesson: lessonWithDateAndWeekIdDto) => lesson.weekId, {
