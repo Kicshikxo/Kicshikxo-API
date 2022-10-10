@@ -54,11 +54,25 @@ export class TimetableService {
   ): Promise<weekDto[]> {
     const lessons = (
       await this.pool.query(
-        `SELECT week_id as "weekId", date::timestamptz, "index", name, cabinet FROM (SELECT week_id FROM select_filled_weeks_for_group('${group}') as week_id LIMIT ${
-          limit || 'NULL'
-        } OFFSET ${
-          offset || 'NULL'
-        }) AS selected_weeks, LATERAL select_lessons_by_week_id(week_id,'${group}') AS selected_lessons`,
+        `SELECT
+            week_id AS "weekId",
+            date::timestamptz,
+            index,
+            name,
+            cabinet
+        FROM
+            (
+                SELECT
+                    week_id
+                FROM
+                    select_filled_weeks_for_group('${group}')
+                LIMIT ${limit || 'NULL'}
+                OFFSET ${offset || 'NULL'}
+            ) AS selected_weeks,
+            LATERAL select_lessons_by_week_id(
+                week_id,
+                '${group}'
+            ) AS selected_lessons`,
       )
     ).rows.map((row) =>
       Object.assign(row, { date: row.date.toISOString().split('T')[0] }),
