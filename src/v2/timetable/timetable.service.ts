@@ -63,9 +63,9 @@ export class TimetableService {
         FROM
           (
             SELECT
-                week_id
+              week_id
             FROM
-                select_filled_weeks_for_group('${group}')
+              select_filled_weeks_for_group('${group}')
             LIMIT ${limit || 'NULL'}
             OFFSET ${offset || 'NULL'}
           ) AS selected_weeks,
