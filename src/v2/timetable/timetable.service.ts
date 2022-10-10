@@ -55,11 +55,11 @@ export class TimetableService {
     console.time('db');
     const lessons = (
       await this.pool.query(
-        `SELECT id as "weekId", date::timestamptz, "index", name, cabinet FROM (SELECT id FROM weeks ORDER BY id DESC LIMIT ${
+        `SELECT week_id as "weekId", date::timestamptz, "index", name, cabinet FROM (SELECT week_id FROM select_filled_weeks_for_group('${group}') as week_id LIMIT ${
           limit || 'NULL'
         } OFFSET ${
           offset || 'NULL'
-        }) AS selected_weeks, LATERAL select_lessons_by_week_id(id,'${group}') AS selected_lessons`,
+        }) AS selected_weeks, LATERAL select_lessons_by_week_id(week_id,'${group}') AS selected_lessons`,
       )
     ).rows.map((row) =>
       Object.assign(row, { date: row.date.toISOString().split('T')[0] }),
