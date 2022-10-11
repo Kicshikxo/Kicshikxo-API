@@ -35,7 +35,7 @@ export class TimetableService {
 
   async getAcademicYears(): Promise<string[]> {
     const academicYears = await this.pool.query('SELECT * FROM academic_years');
-    return academicYears.rows.map((row) => row.year);
+    return academicYears.rows.map((row) => row.year) as string[];
   }
 
   async getGroups(academicYear: string): Promise<groupDto[]> {
@@ -52,27 +52,35 @@ export class TimetableService {
     offset: number,
     group: string,
   ): Promise<weekDto[]> {
-    const lessons = (
+    const lessons: lessonWithDateAndWeekIdDto[] = (
       await this.pool.query(
         `SELECT
-          week_id AS "weekId",
-          date::timestamptz,
-          index,
-          name,
-          cabinet
+            week_id AS "weekId",
+            date::timestamptz,
+            index,
+            name,
+            cabinet
         FROM
-          (
+        (
             SELECT
-              week_id
+                DISTINCT(week_id)
             FROM
-              select_filled_weeks_for_group('${group}')
-            LIMIT ${limit || 'NULL'}
-            OFFSET ${offset || 'NULL'}
-          ) AS selected_weeks,
-        	LATERAL select_lessons_by_week_id(
+                days
+            INNER JOIN lessons ON
+                days.date = lessons.date
+            WHERE
+                lessons.group = '${group}'
+            ORDER BY
+                week_id DESC
+            LIMIT
+                ${limit || 'NULL'}
+            OFFSET
+                ${offset || 'NULL'}
+        ) AS selected_weeks,
+        LATERAL select_lessons_by_week_id(
             week_id,
             '${group}'
-          ) AS selected_lessons`,
+        ) AS selected_lessons`,
       )
     ).rows.map((row) =>
       Object.assign(row, { date: row.date.toISOString().split('T')[0] }),
