@@ -37,13 +37,15 @@ export class AuthService {
       throw new BadRequestException();
     }
 
-    if (!loginData.password) {
+    const accessPassword: string = groupAccess.rows[0].password;
+
+    if (!loginData.password || !accessPassword) {
       return {
         token: sign({ group }, process.env.JWT_SECRET),
       };
     }
 
-    if (loginData.password === groupAccess.rows[0].password) {
+    if (loginData.password === accessPassword) {
       return {
         token: sign(
           { group, password: hashSync(loginData.password, 8) },
