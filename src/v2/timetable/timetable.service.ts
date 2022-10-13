@@ -40,7 +40,7 @@ export class TimetableService {
 
   async getGroups(academicYear: string): Promise<groupDto[]> {
     const groups = await this.pool.query(
-      `SELECT id, group, academic_year as "academicYear" FROM groups ${
+      `SELECT id, "group", academic_year as "academicYear" FROM groups ${
         academicYear ? `WHERE academic_year = '${academicYear}'` : ''
       }`,
     );
