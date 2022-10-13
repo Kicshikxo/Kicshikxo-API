@@ -15,7 +15,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Получение токена аутентификации' })
   @ApiResponse({
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
     type: loginResponseDto,
     description: 'Токен аутентификации',
   })
@@ -40,7 +40,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Проверка аутентификации по токену' })
   @ApiResponse({
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
     type: checkLoginResponseDto,
     description: 'Успешность выполнения проверки',
   })
