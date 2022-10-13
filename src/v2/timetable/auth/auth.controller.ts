@@ -1,6 +1,6 @@
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { checkLoginDataDto } from './dto/checkLoginData.dto';
 import { checkLoginResponseDto } from './dto/checkLoginResponse.dto';
 import { loginDataDto } from './dto/loginData.dto';
@@ -12,6 +12,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Получение токена аутентификации' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -36,6 +37,7 @@ export class AuthController {
   }
 
   @Post('check-login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Проверка аутентификации по токену' })
   @ApiResponse({
     status: HttpStatus.CREATED,
