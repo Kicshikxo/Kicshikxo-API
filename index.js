@@ -4,7 +4,6 @@ const http = require('http')
 
 const moobotCommands = require('./Moobot-commands/index')
 const timetable = require('./Timetable/index')
-const timetable2 = require('./v2/Timetable/index')
 const duties = require('./Duties/index')
 
 const app = express()
@@ -15,7 +14,6 @@ const server = http.createServer(app)
 
 app.use('/moobot-commands', moobotCommands)
 app.use('/timetable', timetable)
-app.use('/v2/timetable', timetable2)
 duties.listen(server)
 
 app.get('/*', (req, res) => {
