@@ -34,15 +34,17 @@ export class TimetableService {
   }
 
   async getAcademicYears(): Promise<string[]> {
-    const academicYears = await this.pool.query('SELECT * FROM academic_years');
+    const academicYears = await this.pool.query(
+      'SELECT year FROM academic_years ORDER BY year',
+    );
     return academicYears.rows.map((row) => row.year) as string[];
   }
 
   async getGroups(academicYear: string): Promise<groupDto[]> {
     const groups = await this.pool.query(
-      `SELECT id, "group", academic_year as "academicYear" FROM groups ${
+      `SELECT id, name, academic_year as "academicYear" FROM groups ${
         academicYear ? `WHERE academic_year = '${academicYear}'` : ''
-      }`,
+      } ORDER BY id`,
     );
     return groups.rows as groupDto[];
   }

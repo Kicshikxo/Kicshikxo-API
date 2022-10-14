@@ -8,7 +8,7 @@ export class groupDto {
   id: string;
 
   @ApiProperty({ example: 'ПКС-4.2', description: 'Название группы' })
-  group: string;
+  name: string;
 
   @ApiProperty({ example: '2022-2023', description: 'Учебный год группы' })
   academicYear: string;
