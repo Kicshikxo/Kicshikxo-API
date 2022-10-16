@@ -1,3 +1,4 @@
+import { weeksResponseDto } from './dto/weeks.response.dto';
 import { dayDto } from './dto/day.dto';
 import { groupDto } from './dto/group.dto';
 import { Injectable } from '@nestjs/common';
@@ -53,7 +54,7 @@ export class TimetableService {
     limit: number,
     offset: number,
     group: string,
-  ): Promise<weekDto[]> {
+  ): Promise<weeksResponseDto> {
     const lessons: lessonWithDateAndWeekIdDto[] = (
       await this.pool.query(
         `SELECT
@@ -87,6 +88,19 @@ export class TimetableService {
     ).rows.map((row) =>
       Object.assign(row, { date: row.date.toISOString().split('T')[0] }),
     );
+
+    const totalItems: number = (
+      await this.pool.query(`
+        SELECT
+            COUNT(DISTINCT(week_id)) AS "totalItems"
+        FROM
+            days
+        INNER JOIN lessons ON
+            days.date = lessons.date
+        WHERE
+            lessons.group = '${group}'
+    `)
+    ).rows[0].totalItems;
 
     const lessonsStream$: Observable<weekDto[]> = from(lessons).pipe(
       groupBy((lesson: lessonWithDateAndWeekIdDto) => lesson.weekId, {
@@ -122,6 +136,9 @@ export class TimetableService {
       toArray<weekDto>(),
     );
 
-    return firstValueFrom(lessonsStream$);
+    return {
+      totalItemsCount: Number(totalItems),
+      weeks: await firstValueFrom(lessonsStream$),
+    };
   }
 }

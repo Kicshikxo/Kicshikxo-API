@@ -1,8 +1,8 @@
+import { weeksResponseDto } from './dto/weeks.response.dto';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth/auth.service';
 import { groupDto } from './dto/group.dto';
 import { TimetableService } from './timetable.service';
-import { weekDto } from './dto/week.dto';
 import { Controller, Get, Query, HttpStatus } from '@nestjs/common';
 
 @ApiTags('Timetable v2')
@@ -53,7 +53,7 @@ export class TimetableController {
   @ApiOperation({ summary: 'Получение списка недель' })
   @ApiResponse({
     status: HttpStatus.OK,
-    type: weekDto,
+    type: weeksResponseDto,
     isArray: true,
     description: 'Список недель',
   })
@@ -87,7 +87,7 @@ export class TimetableController {
     @Query('limit') limit: number,
     @Query('offset') offset: number,
     @Query('token') token: string,
-  ): Promise<weekDto[]> {
+  ): Promise<weeksResponseDto> {
     const tokenData = this.authService.readToken(token);
     return this.timetableService.getWeeks(limit, offset, tokenData.group);
   }
