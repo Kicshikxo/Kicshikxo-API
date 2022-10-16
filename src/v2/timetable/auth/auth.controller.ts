@@ -1,10 +1,10 @@
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { checkLoginDataDto } from './dto/checkLoginData.dto';
-import { checkLoginResponseDto } from './dto/checkLoginResponse.dto';
-import { loginDataDto } from './dto/loginData.dto';
-import { loginResponseDto } from './dto/loginResponse.dto';
+import { checkLoginDataDto } from './dto/checkLogin.data.dto';
+import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
+import { loginDataDto } from './dto/login.data.dto';
+import { loginResponseDto } from './dto/login.response.dto';
 
 @ApiTags('Timetable v2')
 @Controller('/v2/timetable/auth')
