@@ -1,8 +1,8 @@
-import { checkLoginDataDto } from './dto/checkLoginData.dto';
-import { checkLoginResponseDto } from './dto/checkLoginResponse.dto';
+import { checkLoginDataDto } from './dto/checkLogin.data.dto';
+import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
 import { compareSync, hashSync } from 'bcrypt';
-import { loginDataDto } from './dto/loginData.dto';
-import { loginResponseDto } from './dto/loginResponse.dto';
+import { loginDataDto } from './dto/login.data.dto';
+import { loginResponseDto } from './dto/login.response.dto';
 import { Pool } from 'pg';
 import { sign, verify } from 'jsonwebtoken';
 import { tokenDataDto } from './dto/tokenData.dto';
@@ -11,6 +11,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Role } from './enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -41,14 +42,24 @@ export class AuthService {
 
     if (!loginData.password || !accessPassword) {
       return {
-        token: sign({ group }, process.env.JWT_SECRET),
+        isAdmin: false,
+        groupName: group.split(' ')[0],
+        groupAcademicYear: group.split(' ')[1],
+        token: sign({ group, role: Role.Member }, process.env.JWT_SECRET),
       };
     }
 
     if (loginData.password === accessPassword) {
       return {
+        isAdmin: true,
+        groupName: group.split(' ')[0],
+        groupAcademicYear: group.split(' ')[1],
         token: sign(
-          { group, password: hashSync(loginData.password, 8) },
+          {
+            group,
+            role: Role.Admin,
+            password: hashSync(loginData.password, 8),
+          },
           process.env.JWT_SECRET,
         ),
       };
@@ -79,7 +90,12 @@ export class AuthService {
       (!tokenData.password ||
         compareSync(groupAccess.rows[0].password, tokenData.password))
     ) {
-      return { success: true };
+      return {
+        valid: true,
+        isAdmin: tokenData.role == Role.Admin,
+        groupName: tokenData.group.split(' ')[0],
+        groupAcademicYear: tokenData.group.split(' ')[1],
+      };
     } else {
       throw new UnauthorizedException();
     }
