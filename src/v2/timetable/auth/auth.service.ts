@@ -43,8 +43,8 @@ export class AuthService {
     if (!loginData.password || !accessPassword) {
       return {
         isAdmin: false,
-        groupName: group.split(' ')[0],
-        groupAcademicYear: group.split(' ')[1],
+        groupName: loginData.group,
+        groupAcademicYear: loginData.academicYear,
         token: sign({ group, role: Role.Member }, process.env.JWT_SECRET),
       };
     }
@@ -52,8 +52,8 @@ export class AuthService {
     if (loginData.password === accessPassword) {
       return {
         isAdmin: true,
-        groupName: group.split(' ')[0],
-        groupAcademicYear: group.split(' ')[1],
+        groupName: loginData.group,
+        groupAcademicYear: loginData.academicYear,
         token: sign(
           {
             group,
