@@ -1,9 +1,16 @@
-import { weeksResponseDto } from './dto/weeks.response.dto';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth/auth.service';
+import { Controller, Get, HttpStatus, Query, Req } from '@nestjs/common';
 import { groupDto } from './dto/group.dto';
+import { Request } from 'express';
 import { TimetableService } from './timetable.service';
-import { Controller, Get, Query, HttpStatus } from '@nestjs/common';
+import { weeksResponseDto } from './dto/weeks.response.dto';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Timetable v2')
 @Controller('/v2/timetable')
@@ -50,6 +57,7 @@ export class TimetableController {
   }
 
   @Get('weeks')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Получение списка недель' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -75,20 +83,11 @@ export class TimetableController {
     required: false,
     example: 3,
   })
-  @ApiQuery({
-    name: 'token',
-    description: 'Токен аутентификации',
-    type: String,
-    required: true,
-    example:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-  })
   async getWeeks(
     @Query('limit') limit: number,
     @Query('offset') offset: number,
-    @Query('token') token: string,
+    @Req() req: Request,
   ): Promise<weeksResponseDto> {
-    const tokenData = this.authService.readToken(token);
-    return this.timetableService.getWeeks(limit, offset, tokenData.group);
+    return this.timetableService.getWeeks(limit, offset, req.tokenData.group);
   }
 }

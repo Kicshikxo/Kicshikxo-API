@@ -11,6 +11,7 @@ function createSwagger(app: INestApplication) {
   const options = new DocumentBuilder()
     .setTitle('Kicshikxo API')
     .setVersion(version)
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
