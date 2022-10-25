@@ -18,11 +18,7 @@ export class UpdatesService {
 
     const latestVersion: string | null = newVersion.rows[0].latestVersion;
 
-    if (!latestVersion) {
-      return { isUpdateAvailable: false, latestVersion };
-    }
-
-    return { isUpdateAvailable: true, latestVersion };
+    return { isUpdateAvailable: !!latestVersion, latestVersion };
   }
 
   async latestUpdate(platform: Platform): Promise<updateDto> {
