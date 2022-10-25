@@ -1,9 +1,9 @@
+import { DatabaseService } from './../database.service';
 import { checkLoginDataDto } from './dto/checkLogin.data.dto';
 import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
 import { compareSync, hashSync } from 'bcrypt';
 import { loginDataDto } from './dto/login.data.dto';
 import { loginResponseDto } from './dto/login.response.dto';
-import { Pool } from 'pg';
 import { sign, verify } from 'jsonwebtoken';
 import { tokenDataDto } from './dto/tokenData.dto';
 import {
@@ -15,22 +15,12 @@ import { Role } from './enums/role.enum';
 
 @Injectable()
 export class AuthService {
-  private readonly pool: Pool;
-
-  constructor() {
-    this.pool = new Pool({
-      host: process.env.POSTGRES_HOST,
-      port: Number(process.env.POSTGRES_PORT),
-      user: process.env.POSTGRES_API_USER,
-      password: process.env.POSTGRES_API_PASSWORD,
-      database: process.env.POSTGRES_TIMETABLE_DATABASE,
-    });
-  }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async login(loginData: loginDataDto): Promise<loginResponseDto> {
     const group = `${loginData.group} ${loginData.academicYear}`;
 
-    const groupAccess = await this.pool.query(
+    const groupAccess = await this.databaseService.query(
       `SELECT password FROM group_access WHERE "group" = '${group}'`,
     );
 
@@ -81,7 +71,7 @@ export class AuthService {
   ): Promise<checkLoginResponseDto> {
     const tokenData = this.readToken(checkLoginData.token);
 
-    const groupAccess = await this.pool.query(
+    const groupAccess = await this.databaseService.query(
       `SELECT password FROM group_access WHERE "group" = '${tokenData.group}'`,
     );
 

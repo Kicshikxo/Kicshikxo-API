@@ -1,8 +1,8 @@
+import { DatabaseService } from './database.service';
 import { weeksResponseDto } from './dto/weeks.response.dto';
 import { dayDto } from './dto/day.dto';
 import { groupDto } from './dto/group.dto';
 import { Injectable } from '@nestjs/common';
-import { Pool } from 'pg';
 import { weekDto } from './dto/week.dto';
 import {
   lessonDto,
@@ -22,27 +22,17 @@ import {
 
 @Injectable()
 export class TimetableService {
-  private readonly pool: Pool;
-
-  constructor() {
-    this.pool = new Pool({
-      host: process.env.POSTGRES_HOST,
-      port: Number(process.env.POSTGRES_PORT),
-      user: process.env.POSTGRES_API_USER,
-      password: process.env.POSTGRES_API_PASSWORD,
-      database: process.env.POSTGRES_TIMETABLE_DATABASE,
-    });
-  }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async getAcademicYears(): Promise<string[]> {
-    const academicYears = await this.pool.query(
+    const academicYears = await this.databaseService.query(
       'SELECT year FROM academic_years ORDER BY year',
     );
     return academicYears.rows.map((row) => row.year) as string[];
   }
 
   async getGroups(academicYear: string): Promise<groupDto[]> {
-    const groups = await this.pool.query(
+    const groups = await this.databaseService.query(
       `SELECT id, name, academic_year as "academicYear" FROM groups ${
         academicYear ? `WHERE academic_year = '${academicYear}'` : ''
       } ORDER BY id`,
@@ -56,7 +46,7 @@ export class TimetableService {
     group: string,
   ): Promise<weeksResponseDto> {
     const lessons: lessonWithDateAndWeekIdDto[] = (
-      await this.pool.query(
+      await this.databaseService.query(
         `SELECT
             week_id AS "weekId",
             date::timestamptz,
@@ -90,7 +80,7 @@ export class TimetableService {
     );
 
     const totalItems: number = (
-      await this.pool.query(`
+      await this.databaseService.query(`
         SELECT
             COUNT(DISTINCT(week_id)) AS "totalItems"
         FROM

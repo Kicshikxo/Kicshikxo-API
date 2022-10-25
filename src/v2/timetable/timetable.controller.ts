@@ -1,4 +1,4 @@
-import { AuthService } from './auth/auth.service';
+import { UpdatesService } from './updates/updates.service';
 import { Controller, Get, HttpStatus, Query, Req } from '@nestjs/common';
 import { groupDto } from './dto/group.dto';
 import { Request } from 'express';
@@ -15,10 +15,7 @@ import {
 @ApiTags('Timetable v2')
 @Controller('/v2/timetable')
 export class TimetableController {
-  constructor(
-    private readonly timetableService: TimetableService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly timetableService: TimetableService) {}
 
   @Get('academic-years')
   @ApiOperation({ summary: 'Получение списка учебных лет' })
