@@ -9,7 +9,7 @@ export default class isUpdateAvailableResponseDto {
 
   @ApiProperty({
     example: '2.0.1',
-    description: 'Последняя достуаная версия',
+    description: 'Последняя доступная версия',
   })
   latestVersion: string | null;
 }
