@@ -1,7 +1,9 @@
-import { DatabaseService } from './database.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthMiddleware } from './auth.middleware';
 import { AuthService } from './auth/auth.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DatabaseService } from './database.service';
+import { JwtModule } from '@nestjs/jwt';
 import { TimetableController } from './timetable.controller';
 import { TimetableService } from './timetable.service';
 import { UpdatesController } from './updates/updates.controller';
@@ -14,7 +16,15 @@ import {
 } from '@nestjs/common';
 
 @Module({
-  imports: [],
+  imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+      }),
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [TimetableController, AuthController, UpdatesController],
   providers: [DatabaseService, TimetableService, AuthService, UpdatesService],
 })

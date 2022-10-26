@@ -1,10 +1,10 @@
+import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from './../database.service';
 import { checkLoginDataDto } from './dto/checkLogin.data.dto';
 import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
 import { compareSync, hashSync } from 'bcrypt';
 import { loginDataDto } from './dto/login.data.dto';
 import { loginResponseDto } from './dto/login.response.dto';
-import { sign, verify } from 'jsonwebtoken';
 import { tokenDataDto } from './dto/tokenData.dto';
 import {
   BadRequestException,
@@ -15,7 +15,10 @@ import { Role } from './enums/role.enum';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly databaseService: DatabaseService,
+  ) {}
 
   async login(loginData: loginDataDto): Promise<loginResponseDto> {
     const group = `${loginData.group} ${loginData.academicYear}`;
@@ -35,7 +38,7 @@ export class AuthService {
         isAdmin: false,
         groupName: loginData.group,
         groupAcademicYear: loginData.academicYear,
-        token: sign({ group, role: Role.Member }, process.env.JWT_SECRET),
+        token: this.jwtService.sign({ group, role: Role.Member }),
       };
     }
 
@@ -44,14 +47,11 @@ export class AuthService {
         isAdmin: true,
         groupName: loginData.group,
         groupAcademicYear: loginData.academicYear,
-        token: sign(
-          {
-            group,
-            role: Role.Admin,
-            password: hashSync(loginData.password, 8),
-          },
-          process.env.JWT_SECRET,
-        ),
+        token: this.jwtService.sign({
+          group,
+          role: Role.Admin,
+          password: hashSync(loginData.password, 8),
+        }),
       };
     }
 
@@ -60,7 +60,7 @@ export class AuthService {
 
   readToken(token: string): tokenDataDto {
     try {
-      return verify(token, process.env.JWT_SECRET) as tokenDataDto;
+      return this.jwtService.verify(token) as tokenDataDto;
     } catch {
       throw new UnauthorizedException();
     }
