@@ -32,6 +32,9 @@ export class TimetableModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes({ path: '/v2/timetable/weeks', method: RequestMethod.GET });
+      .forRoutes(
+        { path: '/v2/timetable/weeks', method: RequestMethod.GET },
+        { path: '/v2/timetable/auth/check-login', method: RequestMethod.GET },
+      );
   }
 }

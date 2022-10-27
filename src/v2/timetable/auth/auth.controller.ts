@@ -1,10 +1,25 @@
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { checkLoginDataDto } from './dto/checkLogin.data.dto';
 import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
 import { loginDataDto } from './dto/login.data.dto';
 import { loginResponseDto } from './dto/login.response.dto';
+import { Request } from 'express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
 
 @ApiTags('Timetable v2')
 @Controller('/v2/timetable/auth')
@@ -36,8 +51,8 @@ export class AuthController {
     return this.authService.login(loginData);
   }
 
-  @Post('check-login')
-  @HttpCode(HttpStatus.OK)
+  @Get('check-login')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Проверка аутентификации по токену' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -46,16 +61,9 @@ export class AuthController {
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
-    description: 'Невалидный токен аутентификации',
+    description: 'Ошибка аутентификации',
   })
-  @ApiBody({
-    type: checkLoginDataDto,
-    description: 'Токен аутентификации',
-    required: true,
-  })
-  checkLogin(
-    @Body() checkLoginData: checkLoginDataDto,
-  ): Promise<checkLoginResponseDto> {
-    return this.authService.checkLogin(checkLoginData);
+  checkLogin(@Req() req: Request): Promise<checkLoginResponseDto> {
+    return this.authService.checkLogin(req.tokenData);
   }
 }

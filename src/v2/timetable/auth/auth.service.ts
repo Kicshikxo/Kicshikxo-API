@@ -1,17 +1,17 @@
-import { JwtService } from '@nestjs/jwt';
-import { DatabaseService } from './../database.service';
 import { checkLoginDataDto } from './dto/checkLogin.data.dto';
 import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
 import { compareSync, hashSync } from 'bcrypt';
+import { DatabaseService } from './../database.service';
+import { JwtService } from '@nestjs/jwt';
 import { loginDataDto } from './dto/login.data.dto';
 import { loginResponseDto } from './dto/login.response.dto';
+import { Role } from './enums/role.enum';
 import { tokenDataDto } from './dto/tokenData.dto';
 import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Role } from './enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -66,11 +66,7 @@ export class AuthService {
     }
   }
 
-  async checkLogin(
-    checkLoginData: checkLoginDataDto,
-  ): Promise<checkLoginResponseDto> {
-    const tokenData = this.readToken(checkLoginData.token);
-
+  async checkLogin(tokenData: tokenDataDto): Promise<checkLoginResponseDto> {
     const groupAccess = await this.databaseService.query(
       `SELECT password FROM group_access WHERE "group" = '${tokenData.group}'`,
     );
