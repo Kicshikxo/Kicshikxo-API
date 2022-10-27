@@ -1,4 +1,3 @@
-import { checkLoginDataDto } from './dto/checkLogin.data.dto';
 import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
 import { compareSync, hashSync } from 'bcrypt';
 import { DatabaseService } from './../database.service';
