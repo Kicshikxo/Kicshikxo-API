@@ -15,7 +15,8 @@ function createSwagger(app: INestApplication) {
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('/', app, document, {
-    customCss: '.swagger-ui .topbar { display: none }',
+    customCss:
+      '.swagger-ui .topbar { display: none } * {outline: none !important}',
     customSiteTitle: 'Kicshikxo API',
   });
 }
