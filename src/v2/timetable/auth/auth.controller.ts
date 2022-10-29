@@ -1,5 +1,4 @@
 import { AuthService } from './auth.service';
-import { checkLoginDataDto } from './dto/checkLogin.data.dto';
 import { checkLoginResponseDto } from './dto/checkLogin.response.dto';
 import { loginDataDto } from './dto/login.data.dto';
 import { loginResponseDto } from './dto/login.response.dto';
