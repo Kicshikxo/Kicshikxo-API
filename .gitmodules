@@ -1,0 +1,6 @@
+[submodule "Twitch-bot"]
+	path = src/twitch-bot
+	url = https://github.com/Kicshikxo/Twitch-bot
+[submodule "Timetable-API"]
+	path = src/timetable
+	url = https://github.com/Kicshikxo/Timetable-API
