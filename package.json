@@ -21,8 +21,8 @@
         "@nestjs/swagger": "^6.3.0",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.8.0",
-        "twitch-bot": "file:src/twitch-bot",
-        "timetable": "file:src/timetable"
+        "timetable": "file:src/timetable",
+        "twitch-bot": "file:src/twitch-bot"
     },
     "devDependencies": {
         "@nestjs/cli": "^9.4.0",
