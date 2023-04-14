@@ -5,6 +5,6 @@ export const createSwagger = (app: INestApplication, document: OpenAPIObject, op
     SwaggerModule.setup(options?.path ?? '/', app, document, {
         customCss: '.swagger-ui .topbar{display:none}*{outline:none!important;font-family:Rubik,sans-serif!important}',
         customCssUrl: 'https://fonts.googleapis.com/css2?family=Rubik&display=swap',
-        customSiteTitle: 'Kicshikxo Twitch bot API'
+        customSiteTitle: document.info.title
     })
 }
