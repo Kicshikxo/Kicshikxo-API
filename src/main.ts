@@ -10,9 +10,11 @@ import { createDocument as createTwitchBotDocument } from './twitch-bot/src/swag
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule)
     app.useStaticAssets(join(__dirname, 'static'))
-    const configService = app.get(ConfigService)
+
     createSwagger(app, createTwitchBotDocument(app), { path: 'v1/twitch-bot' })
     createSwagger(app, createTimetableDocument(app), { path: 'v2/timetable' })
+
+    const configService = app.get(ConfigService)
     await app.listen(configService.get('PORT') ?? 3000)
 }
 bootstrap()
