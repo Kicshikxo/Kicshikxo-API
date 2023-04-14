@@ -1,33 +1,15 @@
-import helmet from 'helmet';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { INestApplication } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-
-function createSwagger(app: INestApplication) {
-  const version = require('../package.json').version || '';
-
-  const options = new DocumentBuilder()
-    .setTitle('Kicshikxo API')
-    .setVersion(version)
-    .addBearerAuth()
-    .build();
-
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('/', app, document, {
-    customCss:
-      '.swagger-ui .topbar { display: none } * {outline: none !important}',
-    customSiteTitle: 'Kicshikxo API',
-  });
-}
+import { ConfigService } from '@nestjs/config'
+import { NestFactory } from '@nestjs/core'
+import { AppModule } from './app.module'
+import { createSwagger } from './swagger'
+import { createDocument as createTimetableDocument } from './timetable/src/swagger'
+import { createDocument as createTwitchBotDocument } from './twitch-bot/src/swagger'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.use(helmet());
-
-  createSwagger(app);
-
-  await app.listen(3000);
+    const app = await NestFactory.create(AppModule)
+    const configService = app.get(ConfigService)
+    createSwagger(app, createTwitchBotDocument(app), { path: 'v1/twitch-bot' })
+    createSwagger(app, createTimetableDocument(app), { path: 'v2/timetable' })
+    await app.listen(configService.get('PORT') ?? 3000)
 }
-bootstrap();
+bootstrap()
