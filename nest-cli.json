@@ -7,6 +7,10 @@
             {
                 "include": "twitch-bot/src/prisma/client",
                 "watchAssets": true
+            },
+            {
+                "include": "static",
+                "watchAssets": true
             }
         ],
         "deleteOutDir": true
