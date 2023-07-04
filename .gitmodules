@@ -4,3 +4,6 @@
 [submodule "Timetable-API"]
 	path = src/timetable
 	url = https://github.com/Kicshikxo/Timetable-API
+[submodule "Memes-bot"]
+	path = src/memes-bot
+	url = https://github.com/Kicshikxo/Telegram-memes-bot

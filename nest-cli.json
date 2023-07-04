@@ -9,6 +9,10 @@
                 "watchAssets": true
             },
             {
+                "include": "memes-bot/src/prisma/client",
+                "watchAssets": true
+            },
+            {
                 "include": "static",
                 "watchAssets": true
             }
